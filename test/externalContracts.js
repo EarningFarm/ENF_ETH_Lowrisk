@@ -10,6 +10,7 @@ const {
   v3Quoter,
   uniSwapV3Router,
   curve3Pool,
+  stEthLP,
 } = require("../constants/constants");
 
 const usdcAbi = require("../abi/usdc.json");
@@ -35,6 +36,10 @@ const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 
 exports.usdcContract = (deployer) => {
   return new ethers.Contract(usdc, usdcAbi, deployer);
+};
+
+exports.stethContract = (deployer) => {
+  return new ethers.Contract(stEthLP, usdcAbi, deployer);
 };
 
 exports.curve3Exchange = (deployer) => {

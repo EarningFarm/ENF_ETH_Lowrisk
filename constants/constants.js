@@ -219,3 +219,10 @@ exports.tBTCId = 16;
  */
 exports.ethCurrencyId = 1;
 exports.neth = "0xabc07bf91469c5450d6941dd0770e6e6761b90d6";
+
+/**
+ * ETH Low risk STETH
+ */
+exports.curveStEth = "0xDC24316b9AE028F1497c275EB9192a3Ea0f67022";
+exports.stEthLP = "0x06325440D014e39736583c165C2963BA99fAf14E";
+exports.stEthPid = 25;

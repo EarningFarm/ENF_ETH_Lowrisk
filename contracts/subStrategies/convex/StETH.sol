@@ -59,7 +59,7 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
     // Max Deposit
     uint256 public override maxDeposit;
 
-    uint256 public constant virtualPriceMag = 1e30;
+    uint256 public constant virtualPriceMag = 1e18;
 
     event OwnerDeposit(uint256 lpAmount);
 
@@ -125,7 +125,7 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
     }
 
     function getVirtualPrice() public view returns (uint256) {
-        return IPrice(lpToken).get_virtual_price();
+        return IPrice(curvePool).get_virtual_price();
     }
 
     /**
@@ -133,9 +133,8 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
     */
     function _totalAssets() internal view returns (uint256) {
         if (totalLP == 0) return 0;
-        // uint256 assets = ICurvePoolStETH(curvePool).calc_withdraw_one_coin(lpToken, totalLP, tokenId);
 
-        uint256 assets = (totalLP * IPrice(lpToken).get_virtual_price()) / virtualPriceMag;
+        uint256 assets = (totalLP * IPrice(curvePool).get_virtual_price()) / virtualPriceMag;
 
         return assets;
     }
@@ -154,17 +153,19 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
     function _deposit(uint256 _amount) internal returns (uint256) {
         // Get Prev Deposit Amt
         uint256 prevAmt = _totalAssets();
+        console.log("Prev Amt: ", prevAmt);
 
         // Check Max Deposit
         require(prevAmt + _amount <= maxDeposit, "EXCEED_MAX_DEPOSIT");
 
-        // Check whether transferred sufficient usdc from controller
+        // Check whether transferred sufficient eth from controller
         require(address(this).balance >= _amount, "INSUFFICIENT_WETH_TRANSFER");
 
-        uint256 expectOutput = (_amount * virtualPriceMag) / IPrice(lpToken).get_virtual_price();
-
+        uint256 expectOutput = (_amount * virtualPriceMag) / IPrice(curvePool).get_virtual_price();
+        console.log("Expect: ", expectOutput);
         // Calculate Minimum output considering slippage
         uint256 minOutput = (expectOutput * (magnifier - depositSlippage)) / magnifier;
+        console.log("minOutput: ", minOutput);
 
         // Add liquidity to Curve pool
         uint256[2] memory amounts = [_amount, 0];
@@ -172,6 +173,7 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
 
         // Get LP token amount output
         uint256 lpAmt = IERC20(lpToken).balanceOf(address(this));
+        console.log("lpAmt: ", lpAmt);
 
         // Increase LP token total amt
         totalLP += lpAmt;
@@ -215,7 +217,7 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
 
         // Calculate Minimum output
         // uint256 minAmt = ICurvePoolStETH(curvePool).calc_withdraw_one_coin(lpToken, lpWithdrawn, tokenId);
-        uint256 minAmt = (lpWithdrawn * IPrice(lpToken).get_virtual_price()) / virtualPriceMag;
+        uint256 minAmt = (lpWithdrawn * IPrice(curvePool).get_virtual_price()) / virtualPriceMag;
         minAmt = (minAmt * (magnifier - withdrawSlippage)) / magnifier;
 
         // Approve LP token to Curve
@@ -242,7 +244,7 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
         // Transfer Reward tokens to controller
         for (uint256 i = 0; i < rewardTokens.length; i++) {
             uint256 balance = IERC20(rewardTokens[i]).balanceOf(address(this));
-            require(balance > 0, "ZERO_HARVEST_ON_CONVEX_ALUSD");
+            require(balance > 0, "ZERO_HARVEST_ON_CONVEX_STETH");
             TransferHelper.safeTransfer(rewardTokens[i], controller, balance);
         }
 

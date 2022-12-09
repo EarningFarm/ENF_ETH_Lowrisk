@@ -216,15 +216,15 @@ contract Controller is Initializable, IController, OwnableUpgradeable, Reentranc
         }
 
         if (withdrawAmt > 0) {
-            require(asset.balanceOf(address(this)) >= withdrawAmt, "INVALID_WITHDRAWN_AMOUNT");
+            require(address(this).balance >= withdrawAmt, "INVALID_WITHDRAWN_AMOUNT");
 
             // Pay Withdraw Fee to treasury and send rest to user
             fee = (withdrawAmt * withdrawFee) / magnifier;
-            TransferHelper.safeTransfer(address(asset), treasury, fee);
+            TransferHelper.safeTransferETH(treasury, fee);
 
             // Transfer withdrawn token to receiver
             uint256 toReceive = withdrawAmt - fee;
-            TransferHelper.safeTransfer(address(asset), _receiver, toReceive);
+            TransferHelper.safeTransferETH(_receiver, toReceive);
         }
     }
 

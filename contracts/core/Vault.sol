@@ -92,7 +92,7 @@ contract EFVault is Initializable, ERC20Upgradeable, OwnableUpgradeable, Reentra
 
         // Calculate share amount to be mint
         shares = totalSupply() == 0 || totalDeposit == 0 ? assets : (totalSupply() * newDeposit) / totalDeposit;
-
+        console.log("Shares: ", shares);
         // Mint ENF token to receiver
         _mint(receiver, shares);
 

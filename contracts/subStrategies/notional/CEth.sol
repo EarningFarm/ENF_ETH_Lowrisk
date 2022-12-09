@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/ISubStrategy.sol";
 import "../../utils/TransferHelper.sol";
 import "./interfaces/INotionalProxy.sol";
-import "./interfaces/INusdc.sol";
+import "./interfaces/INeth.sol";
 
 contract CEth is OwnableUpgradeable, ISubStrategy {
     using SafeMath for uint256;
@@ -48,10 +48,10 @@ contract CEth is OwnableUpgradeable, ISubStrategy {
     // NoteToken Address
     address public note;
 
-    // nUSDC address
+    // nETH address
     address public nETH;
 
-    // USDC Currency ID
+    // ETH Currency ID
     uint16 public currencyId;
 
     // Max Deposit
@@ -108,28 +108,28 @@ contract CEth is OwnableUpgradeable, ISubStrategy {
     //////////////////////////////////////////
 
     /**
-        External view function of total USDC deposited in Covex Booster
+        External view function of total ETH deposited in Covex Booster
      */
     function totalAssets(bool fetch) external view override returns (uint256) {
         return _totalAssets();
     }
 
     /**
-        Internal view function of total USDC deposited
+        Internal view function of total ETH deposited
     */
     function _totalAssets() internal view returns (uint256) {
         uint256 nTokenBal = IERC20(nETH).balanceOf(address(this));
 
         uint256 nTokenTotal = IERC20(nETH).totalSupply();
 
-        int256 underlyingDenominated = INusdc(nETH).getPresentValueUnderlyingDenominated();
+        int256 underlyingDenominated = INeth(nETH).getPresentValueUnderlyingDenominated();
 
         if (underlyingDenominated < 0) return 0;
         else return ((nTokenBal * uint256(underlyingDenominated)) * decimal) / noteDecimal / nTokenTotal;
     }
 
     /**
-        Deposit function of USDC
+        Deposit function of ETH
      */
     function deposit(uint256 _amount) external override onlyController returns (uint256) {
         uint256 deposited = _deposit(_amount);
@@ -142,12 +142,13 @@ contract CEth is OwnableUpgradeable, ISubStrategy {
     function _deposit(uint256 _amount) internal returns (uint256) {
         // Get Prev Deposit Amt
         uint256 prevAmt = _totalAssets();
+        console.log("Total: ", prevAmt);
 
         // Check Max Deposit
         require(prevAmt + _amount <= maxDeposit, "EXCEED_MAX_DEPOSIT");
 
-        // Check whether transferred sufficient usdc from controller
-        require(address(this).balance >= _amount, "INSUFFICIENT_USDC_TRANSFER");
+        // Check whether transferred sufficient eth from controller
+        require(address(this).balance >= _amount, "INSUFFICIENT_ETH_TRANSFER");
 
         // Make Balance Action
         BalanceAction[] memory actions = new BalanceAction[](1);
@@ -165,7 +166,7 @@ contract CEth is OwnableUpgradeable, ISubStrategy {
 
         // Get new total assets amount
         uint256 newAmt = _totalAssets();
-
+        console.log("New Amt: ", newAmt);
         // Deposited amt
         uint256 deposited = newAmt - prevAmt;
         uint256 minOutput = (_amount * (magnifier - depositSlippage)) / magnifier;
@@ -176,18 +177,19 @@ contract CEth is OwnableUpgradeable, ISubStrategy {
     }
 
     /**
-        Withdraw function of USDC
+        Withdraw function of ETH
      */
     function withdraw(uint256 _amount) external override onlyController returns (uint256) {
         // Get Current Deposit Amt
         uint256 total = _totalAssets();
         uint256 totalLP = IERC20(nETH).balanceOf(address(this));
         uint256 lpAmt = (totalLP * _amount) / total;
-
-        // Withdraw nUSDC
+        console.log("LP Amt: ", lpAmt);
+        // Withdraw nETH
         _withdraw(lpAmt);
-        // Transfer withdrawn USDC to controller
+        // Transfer withdrawn ETH to controller
         uint256 asset = address(this).balance;
+        console.log("ETH: ", asset);
 
         // Deposited amt
         uint256 withdrawn = asset;
@@ -195,7 +197,7 @@ contract CEth is OwnableUpgradeable, ISubStrategy {
 
         require(withdrawn >= minOutput, "WITHDRAW_SLIPPAGE_TOO_BIG");
 
-        // Transfer USDC to Controller
+        // Transfer ETH to Controller
         TransferHelper.safeTransferETH(controller, asset);
 
         return asset;
@@ -245,7 +247,7 @@ contract CEth is OwnableUpgradeable, ISubStrategy {
         if (totalLP == 0) return;
 
         _withdraw(totalLP);
-        // Transfer withdrawn USDC to controller
+        // Transfer withdrawn ETH to controller
         uint256 asset = address(this).balance;
         TransferHelper.safeTransferETH(owner(), asset);
 

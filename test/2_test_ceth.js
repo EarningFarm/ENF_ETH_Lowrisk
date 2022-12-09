@@ -222,51 +222,26 @@ describe("ENF Vault test", async () => {
     console.log(`\tAlice ENF Balance: ${toEth(enf)}`);
   });
 
-  // // it("Get Pid", async () => {
-  // //     const triPID = await ceth.getPID(triLP)
-  // //     console.log(`\tTriPool Pid: ${triPID}`)
-  // // })
+  ////////////////////////////////////////////////
+  //                  HARVEST                   //
+  ////////////////////////////////////////////////
 
-  // ////////////////////////////////////////////////
-  // //                  HARVEST                   //
-  // ////////////////////////////////////////////////
+  it("Pass Time and block number", async () => {
+    await network.provider.send("evm_increaseTime", [3600 * 24 * 1]);
+    await network.provider.send("evm_mine");
+  });
 
-  // it("Pass Time and block number", async () => {
-  //   await network.provider.send("evm_increaseTime", [3600 * 24 * 1]);
-  //   await network.provider.send("evm_mine");
-  // });
+  it("Harvest CETH", async () => {
+    // Get NOTE-ETH path index
+    const index = await balancer.getPathIndex(balancerNoteToETHSwap);
+    console.log(`\tNOTE-ETH Path index: ${index}\n`);
 
-  // it("Harvest CETH", async () => {
-  //   // Get NOTE-ETH path index
-  //   const index = await balancerBatch.getPathIndex(balancerNotetoEthAssets);
-  //   console.log(`\tNOTE-ETH Path index: ${index}\n`);
+    await controller.harvest([0], [index], [balancer.address]);
 
-  //   await controller.harvest([0], [index], [balancerBatch.address]);
-
-  //   // Read Total Assets
-  //   const total = await vault.totalAssets();
-  //   console.log(`\tTotal ETH Balance: ${toEth(total)}\n`);
-  // });
-
-  // it("Pass Time and block number", async () => {
-  //   await network.provider.send("evm_increaseTime", [3600 * 24 * 1]);
-  //   await network.provider.send("evm_mine");
-  // });
-
-  // it("Harvest CETH Balancer multi-swap", async () => {
-  //   // Get NOTE-ETH path index
-  //   const index0 = await balancer.getPathIndex(balancerNotetoEthSwap);
-  //   const index1 = await balancer.getPathIndex(balancerETHtoEthSwap);
-  //   // const index1 = await uniV2.getPathIndex(uniSwapV2Router, ethUsdcPath)
-  //   console.log(`\tNOTE-ETH Balancer Path index: ${index0}\n`);
-  //   console.log(`\tETH-ETH UniV2 Path index: ${index1}\n`);
-
-  //   await controller.harvest([0], [index0, index1], [balancer.address, balancer.address]);
-
-  //   // Read Total Assets
-  //   const total = await vault.totalAssets();
-  //   console.log(`\tTotal ETH Balance: ${toEth(total)}\n`);
-  // });
+    // Read Total Assets
+    const total = await vault.totalAssets();
+    console.log(`\tTotal ETH Balance: ${toEth(total)}\n`);
+  });
 
   // it("Pass Time and block number", async () => {
   //   await network.provider.send("evm_increaseTime", [3600 * 24 * 1]);
@@ -288,37 +263,39 @@ describe("ENF Vault test", async () => {
   //   console.log(`\tTotal ETH Balance: ${toEth(total)}\n`);
   // });
 
-  // ////////////////////////////////////////////////
-  // //              EMERGENCY WITHDRAW            //
-  // ////////////////////////////////////////////////
-  // it("Emergency Withdraw by non-owner will be reverted", async () => {
-  //   await expect(ceth.connect(alice).emergencyWithdraw()).to.be.revertedWith("Ownable: caller is not the owner");
-  // });
+  ////////////////////////////////////////////////
+  //              EMERGENCY WITHDRAW            //
+  ////////////////////////////////////////////////
+  it("Emergency Withdraw by non-owner will be reverted", async () => {
+    await expect(ceth.connect(alice).emergencyWithdraw()).to.be.revertedWith("Ownable: caller is not the owner");
+  });
 
-  // it("Emergency Withdraw", async () => {
-  //   await ceth.emergencyWithdraw();
-  // });
+  it("Emergency Withdraw", async () => {
+    let total = await vault.totalAssets();
+    console.log(`\n\tTotal ETH Balance: ${toEth(total)}`);
 
-  // // it("Get LP withdrawn", async () => {
-  // //     const lpBal = await cethContract(alice).balanceOf(deployer.address)
-  // //     console.log(`\tCEth LP Withdrawn: ${toEth(lpBal)}`)
-  // // })
+    await ceth.emergencyWithdraw();
+    total = await vault.totalAssets();
+    console.log(`\n\tTotal ETH Balance: ${toEth(total)}`);
+  });
 
-  // /////////////////////////////////////////////////
-  // //               OWNER DEPOSIT                 //
-  // /////////////////////////////////////////////////
-  // it("Owner deposit will be reverted", async () => {
-  //   await expect(ceth.connect(alice).ownerDeposit(fromEth(100))).to.revertedWith("Ownable: caller is not the owner");
-  // });
+  // it("Get LP withdrawn", async () => {
+  //     const lpBal = await cethContract(alice).balanceOf(deployer.address)
+  //     console.log(`\tCEth LP Withdrawn: ${toEth(lpBal)}`)
+  // })
 
-  // it("Owner Deposit", async () => {
-  //   // Approve to deposit approver
-  //   await ethContract(deployer).approve(ceth.address, fromEth(1000));
+  /////////////////////////////////////////////////
+  //               OWNER DEPOSIT                 //
+  /////////////////////////////////////////////////
+  it("Owner deposit will be reverted", async () => {
+    await expect(ceth.connect(alice).ownerDeposit(fromEth(100))).to.revertedWith("Ownable: caller is not the owner");
+  });
 
-  //   await ceth.connect(deployer).ownerDeposit(fromEth(1000));
+  it("Owner Deposit", async () => {
+    await ceth.connect(deployer).ownerDeposit(fromEth(1), { value: fromEth(1) });
 
-  //   // Read Total Assets
-  //   const total = await ceth.totalAssets();
-  //   console.log(`\n\tTotal ETH Balance: ${toEth(total)}`);
-  // });
+    // Read Total Assets
+    const total = await vault.totalAssets();
+    console.log(`\n\tTotal ETH Balance: ${toEth(total)}`);
+  });
 });

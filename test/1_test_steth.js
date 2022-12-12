@@ -229,24 +229,24 @@ describe("ENF Vault test", async () => {
   //              HARVEST                     //
   //////////////////////////////////////////////
 
-  // it("Pass Time and block number", async () => {
-  //   await network.provider.send("evm_increaseTime", [3600 * 24 * 60]);
-  //   await network.provider.send("evm_mine");
-  //   await network.provider.send("evm_mine");
-  //   await network.provider.send("evm_mine");
-  // });
+  it("Pass Time and block number", async () => {
+    await network.provider.send("evm_increaseTime", [3600 * 24 * 60]);
+    await network.provider.send("evm_mine");
+    await network.provider.send("evm_mine");
+    await network.provider.send("evm_mine");
+  });
 
-  // it("Harvest StETH", async () => {
-  //   // Get CRV-USDC path index
-  //   const index = await uniV2.getPathIndex(uniSwapV2Router, crvUsdcPath);
-  //   console.log(`\tCRV-USDC Path index: ${index}\n`);
+  it("Harvest StETH", async () => {
+    // Get CRV-USDC path index
+    const index = await uniV2.getPathIndex(uniSwapV2Router, crvEthPath);
+    console.log(`\tCRV-USDC Path index: ${index}\n`);
 
-  //   await controller.harvest([0], [index], [uniV2.address]);
+    await controller.harvest([0], [index], [uniV2.address]);
 
-  //   // Read Total Assets
-  //   const total = await vault.totalAssets();
-  //   console.log(`\tTotal USDC Balance: ${toETH(total)}\n`);
-  // });
+    // Read Total Assets
+    const total = await vault.totalAssets();
+    console.log(`\tTotal USDC Balance: ${toETH(total)}\n`);
+  });
 
   ////////////////////////////////////////////////
   //              EMERGENCY WITHDRAW            //

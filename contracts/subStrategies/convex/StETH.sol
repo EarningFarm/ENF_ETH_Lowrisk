@@ -153,7 +153,6 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
     function _deposit(uint256 _amount) internal returns (uint256) {
         // Get Prev Deposit Amt
         uint256 prevAmt = _totalAssets();
-        console.log("Prev Amt: ", prevAmt);
 
         // Check Max Deposit
         require(prevAmt + _amount <= maxDeposit, "EXCEED_MAX_DEPOSIT");
@@ -162,10 +161,8 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
         require(address(this).balance >= _amount, "INSUFFICIENT_WETH_TRANSFER");
 
         uint256 expectOutput = (_amount * virtualPriceMag) / IPrice(curvePool).get_virtual_price();
-        console.log("Expect: ", expectOutput);
         // Calculate Minimum output considering slippage
         uint256 minOutput = (expectOutput * (magnifier - depositSlippage)) / magnifier;
-        console.log("minOutput: ", minOutput);
 
         // Add liquidity to Curve pool
         uint256[2] memory amounts = [_amount, 0];
@@ -173,7 +170,6 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
 
         // Get LP token amount output
         uint256 lpAmt = IERC20(lpToken).balanceOf(address(this));
-        console.log("lpAmt: ", lpAmt);
 
         // Increase LP token total amt
         totalLP += lpAmt;

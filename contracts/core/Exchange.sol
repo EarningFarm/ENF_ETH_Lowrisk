@@ -71,9 +71,6 @@ contract Exchange is IExchange, OwnableUpgradeable {
         // Get Swapped output amount
         uint256 outAmt = getBalance(_to, address(this));
 
-        console.log("Ex: ", outAmt);
-        console.log("Weth: ", IERC20Upgradeable(weth).balanceOf(address(this)));
-
         // Transfer to Controller
         if (_to == weth) TransferHelper.safeTransferETH(_msgSender(), outAmt);
         else TransferHelper.safeTransfer(_to, _msgSender(), outAmt);

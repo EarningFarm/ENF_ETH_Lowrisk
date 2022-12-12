@@ -320,7 +320,15 @@ contract Controller is Initializable, IController, OwnableUpgradeable, Reentranc
         TransferHelper.safeTransfer(address(asset), treasury, fee);
 
         uint256 toDeposit = assetsHarvested - fee;
-        _deposit((toDeposit));
+
+        // Check Such default SS exists in current pool
+        require(subStrategies.length > defaultDepositSS, "INVALID_POOL_LENGTH");
+
+        // Transfer asset to substrategy
+        TransferHelper.safeTransfer(address(asset), subStrategies[defaultDepositSS].subStrategy, toDeposit);
+
+        // Calls deposit function on SubStrategy
+        ISubStrategy(subStrategies[defaultDepositSS].subStrategy).deposit(toDeposit);
 
         emit Harvest(address(asset), prevTotal, assetsHarvested, block.timestamp);
 

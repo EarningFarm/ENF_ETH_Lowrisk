@@ -278,7 +278,7 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
         Deposit by owner not issueing any ENF token
      */
     function ownerDeposit(uint256 _amount) public payable onlyOwner {
-        require(_amount <= msg.value, "INSUFFICIENT_ETH");
+        require(_amount == msg.value, "INSUFFICIENT_ETH");
 
         // Call deposit
         _deposit(_amount);

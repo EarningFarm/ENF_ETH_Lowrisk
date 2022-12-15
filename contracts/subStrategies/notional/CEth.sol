@@ -20,9 +20,6 @@ contract CEth is OwnableUpgradeable, ISubStrategy {
     // Controller address
     address public controller;
 
-    // WETH token address
-    address public weth;
-
     // decimal
     uint256 public constant decimal = 1e18;
 
@@ -72,7 +69,6 @@ contract CEth is OwnableUpgradeable, ISubStrategy {
     event SetMaxDeposit(uint256 maxDeposit);
 
     function initialize(
-        address _weth,
         address _controller,
         address _notionalProxy,
         address _note,
@@ -80,7 +76,6 @@ contract CEth is OwnableUpgradeable, ISubStrategy {
         uint16 _currencyId
     ) public initializer {
         __Ownable_init();
-        weth = _weth;
         controller = _controller;
         notionalProxy = _notionalProxy;
         note = _note;
@@ -272,7 +267,7 @@ contract CEth is OwnableUpgradeable, ISubStrategy {
         Deposit by owner not issueing any ENF token
      */
     function ownerDeposit(uint256 _amount) public payable onlyOwner {
-        require(_amount <= msg.value, "INSUFFICIENT_ETH");
+        require(_amount == msg.value, "INSUFFICIENT_ETH");
         // Call deposit
         _deposit(_amount);
 

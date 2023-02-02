@@ -1,6 +1,7 @@
 const {
   usdc,
   crv,
+  frxEth,
   wbtc,
   crvETHCurvePool,
   uniSwapV2Router,
@@ -14,6 +15,7 @@ const {
 } = require("../constants/constants");
 
 const usdcAbi = require("../abi/usdc.json");
+const frxEthAbi = require("../abi/frxEth.json");
 const wbtcAbi = require("../abi/wbtc.json");
 const crvAbi = require("../abi/crv.json");
 const crvETHAbi = require("../abi/crvETHPool.json");
@@ -36,6 +38,10 @@ const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 
 exports.usdcContract = (deployer) => {
   return new ethers.Contract(usdc, usdcAbi, deployer);
+};
+
+exports.frxContract = (deployer) => {
+  return new ethers.Contract(frxEth, frxEthAbi, deployer);
 };
 
 exports.stethContract = (deployer) => {

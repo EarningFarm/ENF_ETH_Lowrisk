@@ -24,6 +24,7 @@ exports.balancerV2Vault = "0xBA12222222228d8Ba445958a75a0704d566BF2C8";
 exports.sushiSwapV2Router = "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F";
 exports.sushiSwapV2Factory = "0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac";
 exports.v3Quoter = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e";
+exports.crvExchange = "0xD359D65Cf9Ab8572323Dc8102Ac579baD38AC713";
 
 /**
  * Convex Address
@@ -191,6 +192,24 @@ exports.curveDAIUSDC = [
   false, // ETH_pool
 ];
 
+exports.curveEthFrx = [
+  "0xa1F8A6807c402E4A15ef4EBa36528A3FED24E577",
+  "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+  "0x5E8422345238F34275888049021821E8E08CAa1f",
+  0,
+  1,
+  false,
+];
+
+exports.curveFrxEth = [
+  "0xa1F8A6807c402E4A15ef4EBa36528A3FED24E577",
+  "0x5E8422345238F34275888049021821E8E08CAa1f",
+  "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+  1,
+  0,
+  false,
+];
+
 // Curve 3 Pool
 exports.curve3ETHUSDC = [
   "0xfA9a30350048B2BF66865ee20363067c66f67e58", // Pool
@@ -226,3 +245,11 @@ exports.neth = "0xabc07bf91469c5450d6941dd0770e6e6761b90d6";
 exports.curveStEth = "0xDC24316b9AE028F1497c275EB9192a3Ea0f67022";
 exports.stEthLP = "0x06325440D014e39736583c165C2963BA99fAf14E";
 exports.stEthPid = 25;
+
+/**
+ * ETH Low risk FRXETH
+ */
+exports.curveFrx = "0xa1F8A6807c402E4A15ef4EBa36528A3FED24E577";
+exports.frxEth = "0x5E8422345238F34275888049021821E8E08CAa1f";
+exports.sFrxEth = "0xac3E018457B222d93114458476f3E3416Abbe38F";
+exports.frxMinter = "0xbAFA44EFE7901E04E39Dad13167D089C559c1138";

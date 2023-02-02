@@ -40,7 +40,7 @@ function getChainConfig(network: keyof typeof chainIds) {
     accounts: [`${privateKey}`],
     chainId: chainIds[network],
     url,
-    gasPrice: 17000000000,
+    gasPrice: 25000000000,
     // gasPrice: "auto",
     gasMultiplier: 2,
     blockGasLimit: 800000

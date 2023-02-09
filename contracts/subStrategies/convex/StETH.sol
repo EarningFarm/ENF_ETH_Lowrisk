@@ -211,6 +211,9 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
         require(lpWithdrawn >= lpAmt, "LP_WITHDRAWN_NOT_MATCH");
         totalLP -= lpAmt;
 
+        // Do remove liquidity for reentrancy guard
+        ICurvePoolStETH(curvePool).remove_liquidity_one_coin(0, tokenId, 0);
+
         // Calculate Minimum output
         // uint256 minAmt = ICurvePoolStETH(curvePool).calc_withdraw_one_coin(lpToken, lpWithdrawn, tokenId);
         uint256 minAmt = (lpWithdrawn * IPrice(curvePool).get_virtual_price()) / virtualPriceMag;

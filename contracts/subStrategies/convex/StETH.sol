@@ -160,6 +160,8 @@ contract StETH is OwnableUpgradeable, ISubStrategy {
         // Check whether transferred sufficient eth from controller
         require(address(this).balance >= _amount, "INSUFFICIENT_WETH_TRANSFER");
 
+        ICurvePoolStETH(curvePool).remove_liquidity_one_coin(0, tokenId, 0);
+
         uint256 expectOutput = (_amount * virtualPriceMag) / IPrice(curvePool).get_virtual_price();
         // Calculate Minimum output considering slippage
         uint256 minOutput = (expectOutput * (magnifier - depositSlippage)) / magnifier;

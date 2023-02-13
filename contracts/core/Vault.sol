@@ -69,7 +69,9 @@ contract EFVault is Initializable, ERC20Upgradeable, OwnableUpgradeable, Reentra
     function initialize(
         ERC20Upgradeable _asset,
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        uint256 _assetDecimal,
+        address _whiteList
     ) public initializer {
         __ERC20_init(_name, _symbol);
         __Ownable_init();
@@ -77,6 +79,8 @@ contract EFVault is Initializable, ERC20Upgradeable, OwnableUpgradeable, Reentra
         asset = _asset;
         maxDeposit = type(uint256).max;
         maxWithdraw = type(uint256).max;
+        assetDecimal = _assetDecimal;
+        whiteList = _whiteList;
     }
 
     function deposit(uint256 assets, address receiver)

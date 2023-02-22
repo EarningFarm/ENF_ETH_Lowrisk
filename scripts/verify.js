@@ -23,7 +23,7 @@ async function main() {
   // for (let i = 0; i < adds.length; i++) {
   //   await verifyUpgradeable(adds[i]);
   // }
-  await verifyContract("0x319445851BC3b7D0522b98756F7e7B37b6f9DF81", [])
+  await verifyContract("0x24640Aa52ae7e5462e3f2cB42275d761f835e1a1", []);
 }
 
 main()

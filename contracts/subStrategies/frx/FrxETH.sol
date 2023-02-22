@@ -181,7 +181,7 @@ contract FrxETH is OwnableUpgradeable, ISubStrategy {
 
         // Swap ETH to FrxETH
         uint256 curveExpect = ICurveFrx(curveFrx).get_dy(0, 1, _amount);
-        if (curveExpect < _amount) {
+        if (curveExpect <= _amount) {
             IFrxMinter(frxMinter).submit{value: _amount}();
         } else {
             _swap(swapFromRouters, swapFromIndexes);
